@@ -1,4 +1,6 @@
 {
 	"mongoURI": "mongodb+srv://Jatin:jatin@jatinscluster-smmy1.mongodb.net/devconnector?retryWrites=true&w=majority",
-	"jwtSecret": "jwtSecret"
+	"jwtSecret": "jwtSecret",
+	"githubClientId": "654461c5ac9fa2fd2d35",
+	"githubClientSecret": "2b85c34e8f5d822c5ddfa52ba91320e386303852"
 }
