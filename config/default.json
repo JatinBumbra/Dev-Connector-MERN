@@ -1,0 +1,3 @@
+{
+	"mongoURI": "mongodb+srv://Jatin:jatin@jatinscluster-smmy1.mongodb.net/devconnector?retryWrites=true&w=majority"
+}
