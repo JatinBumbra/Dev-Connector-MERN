@@ -1,3 +1,4 @@
 {
-	"mongoURI": "mongodb+srv://Jatin:jatin@jatinscluster-smmy1.mongodb.net/devconnector?retryWrites=true&w=majority"
+	"mongoURI": "mongodb+srv://Jatin:jatin@jatinscluster-smmy1.mongodb.net/devconnector?retryWrites=true&w=majority",
+	"jwtSecret": "jwtSecret"
 }
