@@ -53,7 +53,7 @@ router.post(
 			const isMatch = await bcrypt.compare(password, user.password);
 
 			if (!isMatch) {
-				res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
+				return res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
 			}
 
 			// Return JWT
