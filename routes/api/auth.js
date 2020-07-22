@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const bcrypt = require("bcryptjs");
+const serverError = require("./serverError");
 
 const User = require("../../models/User");
 
@@ -14,9 +15,8 @@ router.get("/", auth, async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id).select("-password");
 		res.json(user);
-	} catch (err) {
-		console.error(err.message);
-		res.status(500).send("Server error");
+	} catch (error) {
+		serverError(error, __filename);
 	}
 });
 
@@ -53,7 +53,9 @@ router.post(
 			const isMatch = await bcrypt.compare(password, user.password);
 
 			if (!isMatch) {
-				return res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
+				return res
+					.status(404)
+					.json({ errors: [{ msg: "Invalid credentials" }] });
 			}
 
 			// Return JWT
@@ -72,9 +74,8 @@ router.post(
 					res.json({ token });
 				}
 			);
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
+		} catch (error) {
+			serverError(error, __filename);
 		}
 	}
 );

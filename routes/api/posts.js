@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const auth = require("../../middlewares/auth");
 const { check, validationResult } = require("express-validator");
+const serverError = require("./serverError");
 
 const User = require("../../models/User");
 const Post = require("../../models/Post");
 const Profile = require("../../models/Profile");
-const { ConnectionStates } = require("mongoose");
 
 // @route       POST api/posts
 // @desc        Create a post
@@ -37,8 +37,7 @@ router.post(
 			// Return the post
 			res.json(post);
 		} catch (error) {
-			console.error(error.message);
-			res.status(500).send("Server error");
+			serverError(error, __filename);
 		}
 	}
 );
@@ -51,8 +50,7 @@ router.get("/", auth, async (req, res) => {
 		const posts = await Post.find().sort({ date: -1 });
 		res.json(posts);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server Error");
+		serverError(error, __filename);
 	}
 });
 
@@ -69,11 +67,10 @@ router.get("/:post_id", auth, async (req, res) => {
 
 		res.json(post);
 	} catch (error) {
-		console.error(error.message);
 		if (error.kind == "ObjectId") {
 			return res.status(404).json({ msg: "Post not found" });
 		}
-		res.status(500).send("Server Error");
+		serverError(error, __filename);
 	}
 });
 
@@ -97,11 +94,10 @@ router.delete("/:post_id", auth, async (req, res) => {
 
 		res.json({ msg: "Post removed" });
 	} catch (error) {
-		console.error(error.message);
 		if (error.kind == "ObjectId") {
 			return res.status(404).json({ msg: "Post not found" });
 		}
-		res.status(500).send("Server Error");
+		serverError(error, __filename);
 	}
 });
 
@@ -126,8 +122,7 @@ router.put("/like/:post_id", auth, async (req, res) => {
 
 		res.json(post.likes);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
@@ -158,8 +153,7 @@ router.put("/unlike/:post_id", auth, async (req, res) => {
 
 		res.json(post.likes);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
@@ -193,8 +187,7 @@ router.post(
 
 			res.json(post.comments);
 		} catch (error) {
-			console.error(error.message);
-			res.status(500).send("Server request");
+			serverError(error, __filename);
 		}
 	}
 );
@@ -232,8 +225,7 @@ router.delete("/comment/:post_id/:comment_id", auth, async (req, res) => {
 
 		res.json(post.comments);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server Error");
+		serverError(error, __filename);
 	}
 });
 

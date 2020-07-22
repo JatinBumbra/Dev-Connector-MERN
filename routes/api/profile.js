@@ -3,9 +3,11 @@ const auth = require("../../middlewares/auth");
 const request = require("request");
 const config = require("config");
 const { check, validationResult } = require("express-validator");
+const serverError = require("./serverError");
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
+const Post = require("../../models/Post");
 
 // @route       GET api/profile/me
 // @desc        Get current user's profile
@@ -21,9 +23,8 @@ router.get("/me", auth, async (req, res) => {
 		}
 
 		res.json(profile);
-	} catch (err) {
-		console.error("Error: ", err.message);
-		res.status(500).send("Server error");
+	} catch (error) {
+		serverError(error, __filename);
 	}
 });
 
@@ -102,9 +103,8 @@ router.post(
 
 			await profile.save();
 			res.json(profile);
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
+		} catch (error) {
+			serverError(error, __filename);
 		}
 	}
 );
@@ -116,9 +116,8 @@ router.get("/", async (req, res) => {
 	try {
 		const profiles = await Profile.find().populate("user", ["name", "avatar"]);
 		res.json(profiles);
-	} catch (err) {
-		console.error(err.message);
-		res.status(500).send("Server error");
+	} catch (error) {
+		serverError(error, __filename);
 	}
 });
 
@@ -136,12 +135,11 @@ router.get("/user/:user_id", async (req, res) => {
 		}
 
 		res.json(profile);
-	} catch (err) {
-		console.error(err.message);
-		if (err.kind == "ObjectId") {
+	} catch (error) {
+		if (error.kind == "ObjectId") {
 			return res.status(400).json({ msg: "There is no profile for this user" });
 		}
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
@@ -150,17 +148,16 @@ router.get("/user/:user_id", async (req, res) => {
 // @access      Private
 router.delete("/", auth, async (req, res) => {
 	try {
-		// @todo - remove user posts
-
+		// Remove user posts
+		await Post.deleteMany({ user: req.user.id });
 		// Remove profile
 		await Profile.findOneAndRemove({ user: req.user.id });
 		// Remove user
 		await User.findOneAndRemove({ _id: req.user.id });
 
 		res.json({ msg: "User deleted" });
-	} catch (err) {
-		console.error(err.message);
-		res.status(500).send("Server error");
+	} catch (error) {
+		serverError(error, __filename);
 	}
 });
 
@@ -216,8 +213,7 @@ router.put(
 
 			res.json(profile);
 		} catch (error) {
-			console.error(error.message);
-			res.status(500).send("Server error");
+			serverError(error, __filename);
 		}
 	}
 );
@@ -244,8 +240,7 @@ router.delete("/experience/:exp_id", auth, async (req, res) => {
 		// Send back the response
 		res.json(profile);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
@@ -302,8 +297,7 @@ router.put(
 
 			res.json(profile);
 		} catch (error) {
-			console.error(error.message);
-			res.status(500).send("Server error");
+			serverError(error, __filename);
 		}
 	}
 );
@@ -325,8 +319,7 @@ router.delete("/education/:edu_id", auth, async (req, res) => {
 
 		res.json(profile);
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
@@ -355,8 +348,7 @@ router.get("/github/:username", (req, res) => {
 			res.json(JSON.parse(body));
 		});
 	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server error");
+		serverError(error, __filename);
 	}
 });
 
