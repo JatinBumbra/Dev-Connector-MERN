@@ -45,7 +45,7 @@ const EditProfile = ({
 			facebook: loading || !profile.social ? "" : profile.social.facebook,
 			twitter: loading || !profile.social ? "" : profile.social.twitter,
 		});
-	}, [loading]);
+	}, [loading, getCurrentProfile]);
 
 	const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
